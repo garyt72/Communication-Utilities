@@ -15,35 +15,86 @@ public abstract class CommunicationDevice {
 	private DataOutputStream outputStream;
 	private DataInputStream inputStream;
 
+	/**
+	 * @return default IP Address to connect to
+	 */
 	abstract public String getDefaultIp();
+	
+	/**
+	 * @return default port to connect to
+	 */
 	abstract public int getDefaultPort();
+	
+	/**
+	 * @return miliseconds to wait before sending subsequent messages
+	 */
 	abstract public int getSocketSendWait();
+	
+	/**
+	 * @return miliseconds to wait before looking for a response
+	 */
 	abstract public int getSocketReceiveWait();
+	
+	/**
+	 * @return miliseconds to wait for a response before timeout
+	 */
 	abstract public int getSocketReceiveTimeout();
+	
+	/**
+	 * @return display debug output true/false
+	 */
 	abstract public boolean getDebug();
+	
+	/**
+	 * @return display info output true/false (subset of debug)
+	 */
 	abstract public boolean getInfo();
 
 	public int getRepeatDelay() {
 		return repeatDelay;
 	}
 	
+	/**
+	 * default constructor - uses default ip, port and delay
+	 */
 	public CommunicationDevice() {
 		init(getDefaultIp(), getDefaultPort(), getSocketSendWait());
 	}
 	
+	/**
+	 * Constructor - used default port and delay
+	 * @param ipAddress
+	 */
 	public CommunicationDevice(String ipAddress) {
 		init(ipAddress, getDefaultPort(), getSocketSendWait());
 	}
 	
+	/**
+	 * Constructor - uses default delay
+	 * @param ipAddress
+	 * @param port
+	 */
 	public CommunicationDevice(String ipAddress, int port) {
 		init(ipAddress, port, getSocketSendWait());
 	}
 	
+	/**
+	 * Constructor
+	 * @param ipAddress ip address to connect to
+	 * @param port network port to connect to
+	 * @param delay delay between subsequent commands
+	 */
 	public CommunicationDevice(String ipAddress, int port, int delay) {
 		init(ipAddress, port, delay);
 	}
 	
-	public void init(String ipAddress, int port, int delay) {
+	/**
+	 * Initialize the object
+	 * @param ipAddress - ipaddress for the device
+	 * @param port - socket port for the device
+	 * @param delay - command repeat delay
+	 */
+	protected void init(String ipAddress, int port, int delay) {
 		this.ipAddress = ipAddress;
 		this.port = port;
 		this.repeatDelay = delay;
@@ -151,27 +202,67 @@ public abstract class CommunicationDevice {
 		return acted;
 	}
 
-	
+	/**
+	 * Send command to the device
+	 * @param command command to send 
+	 * @return response from device
+	 */
 	public String sendCommand(String command) {
 		return sendCommand(command, 1);
 	}
 
+	/**
+	 * Send command to the device
+	 * @param command command to send
+	 * @param repeat number of times to repeat command
+	 * @return response from device
+	 */
 	public String sendCommand(String command, int repeat) {
 		return sendCommand(command, repeat, command);
 	}
 	
+	/**
+	 * Send command to the device
+	 * @param command command to send
+	 * @param repeat number of times to repeat command
+	 * @param displayCommand "friendly" command name to display
+	 * @return response from device
+	 */
 	public String sendCommand(String command, int repeat, String displayCommand) {
 		return processSendCommand(command, repeat, getSocketSendWait(), displayCommand);
 	}
 	
+	/**
+	 * Send command to the device
+	 * @param command command to send
+	 * @param repeat number of times to repeat command
+	 * @param delay delay betweeen subsequent commands being sent
+	 * @return response from device
+	 */
 	public String sendCommand(String command, int repeat, int delay) {
 		return sendCommand(command, repeat, delay, command);
 	}
 
+	/**
+	 * Send command to the device
+	 * @param command command to send
+	 * @param repeat number of times to repeat command
+	 * @param delay delay betweeen subsequent commands being sent
+	 * @param displayCommand "friendly" command to display
+	 * @return response from device
+	 */
 	public String sendCommand(String command, int repeat, int delay, String displayCommand) {
 		return processSendCommand(command, repeat, delay, displayCommand);
 	}
 	
+	/**
+	 * Send command to the device
+	 * @param command command to send
+	 * @param repeat number of times to repeat command
+	 * @param delay delay betweeen subsequent commands being sent
+	 * @param displayCommand "friendly" command to display
+	 * @return response from device
+	 */
 	private String processSendCommand(String command, int repeat, int delay, String displayCommand) {
 
 		if (connect()) {
@@ -210,15 +301,9 @@ public abstract class CommunicationDevice {
 
 
 	/**
-	 * This method reads responses (possibly more than one) after a query
-	 * command. It can end early when it finds the respose you are waitng for by
-	 * passing in the command you called.
+	 * Reads response from device
 	 * 
-	 * @param command
-	 *            is used to end the response processing early when it finds the
-	 *            command - if you want all responses processed pass in -1
-	 * @return an array of the data portion of the response messages only -
-	 *         There might be more than one response message received.
+	 * @return response from device
 	 **/
 	public String readResponse() {	
 
