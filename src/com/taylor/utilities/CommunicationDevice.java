@@ -285,7 +285,7 @@ public abstract class CommunicationDevice {
 					outputStream.writeBytes(command);
 					outputStream.flush();
 					
-					if (getDebug() || getInfo()) System.out.println("Send #1: " + Util.getTimestamp());
+					if (getDebug() || getInfo()) System.out.println("Send #" + (i+1) + ": " + Util.getTimestamp());
 				}
 	
 				if (getDebug() || getInfo()) System.out.println("Sent!");
