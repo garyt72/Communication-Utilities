@@ -21,6 +21,7 @@ public abstract class AbstractConfig {
 	protected boolean debug;
 	protected boolean info;
 	protected Map<String, String> commands;
+	protected Map<String, String> labels;
 	
 	protected abstract String getDefaultFilename();
 	
@@ -151,10 +152,21 @@ public abstract class AbstractConfig {
 		// get the commands
 		try {
 			commands = new HashMap<String, String>();
+			labels = new HashMap<String, String>();
 			NodeList nodes = configDocument.getElementsByTagName("command");
 			for(int i = 0; i < nodes.getLength(); i++) {
 				Element element = (Element) nodes.item(i);
-				commands.put(element.getAttribute("name"),  element.getAttribute("value"));
+				String name = element.getAttribute("name");
+				String value = element.getAttribute("value");
+				String label = element.getAttribute("label");
+
+				// add the commands to the command map
+				commands.put(name, value);
+				
+				// if there is a label, add it to label map
+				if (label != null && label.length() > 0) {
+					labels.put(value, label);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
